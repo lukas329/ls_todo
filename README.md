@@ -1,66 +1,221 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API Documentation for ToDo Application
 
-## About Laravel
+Authentication Routes
+---------------------
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. User Registration
+- URL: /register
+- Method: POST
+- Description: Registers a new user account.
+- Request Body:
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+- Response: 
+  - Status: 201 Created
+  - Body:
+    {
+        "message": "User registered successfully",
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    }
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2. User Login
+- URL: /login
+- Method: POST
+- Description: Authenticates a user and returns an API token.
+- Request Body:
+{
+    "email": "john@example.com",
+    "password": "password"
+}
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "Login successful",
+        "token": "your-access-token"
+    }
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+ToDo Routes (Requires Authentication)
+-------------------------------------
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Get All ToDos
+- URL: /todos
+- Method: GET
+- Description: Retrieves a list of ToDos for the authenticated user, including their own and shared items.
+- Response:
+  - Status: 200 OK
+  - Body:
+    [
+        {
+            "id": 1,
+            "name": "Buy groceries",
+            "description": "Buy milk, bread, and eggs",
+            "creation_date": "2023-10-01",
+            "done": false,
+            "category_id": 1
+        }
+    ]
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. Create a ToDo
+- URL: /todos
+- Method: POST
+- Description: Creates a new ToDo item for the authenticated user.
+- Request Body:
+{
+    "name": "Complete project",
+    "description": "Finish the final tasks",
+    "creation_date": "2023-10-15",
+    "done": false,
+    "category_id": 1
+}
+- Response:
+  - Status: 201 Created
+  - Body:
+    {
+        "id": 2,
+        "name": "Complete project",
+        "description": "Finish the final tasks",
+        "creation_date": "2023-10-15",
+        "done": false,
+        "category_id": 1
+    }
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. Update a ToDo
+- URL: /todos/{id}
+- Method: PUT
+- Description: Updates an existing ToDo item by ID.
+- Request Body:
+{
+    "name": "Updated project name",
+    "description": "Update project details",
+    "done": true
+}
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "id": 2,
+        "name": "Updated project name",
+        "description": "Update project details",
+        "done": true
+    }
 
-## Laravel Sponsors
+6. Soft Delete a ToDo
+- URL: /todos/{id}
+- Method: DELETE
+- Description: Soft deletes a ToDo item.
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "ToDo item deleted successfully"
+    }
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7. Permanently Delete a ToDo
+- URL: /todos/{id}/delete
+- Method: DELETE
+- Description: Permanently deletes a soft-deleted ToDo item.
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "ToDo item permanently deleted"
+    }
 
-### Premium Partners
+8. Restore a Deleted ToDo
+- URL: /todos/{id}/restore
+- Method: POST
+- Description: Restores a previously soft-deleted ToDo item.
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "ToDo item restored successfully"
+    }
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+9. Share a ToDo with Another User
+- URL: /todos/{todoId}/share
+- Method: POST
+- Description: Shares a ToDo item with another user.
+- Request Body:
+{
+    "user_id": 3
+}
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "ToDo shared successfully"
+    }
 
-## Contributing
+10. Unshare a ToDo with Another User
+- URL: /todos/{todoId}/unshare
+- Method: POST
+- Description: Removes sharing access from a user.
+- Request Body:
+{
+    "user_id": 3
+}
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "ToDo unshared successfully"
+    }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+Category Routes (Requires Authentication)
+-----------------------------------------
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+11. Create a Category
+- URL: /categories
+- Method: POST
+- Description: Creates a new category.
+- Request Body:
+{
+    "name": "Work"
+}
+- Response:
+  - Status: 201 Created
+  - Body:
+    {
+        "id": 1,
+        "name": "Work"
+    }
 
-## Security Vulnerabilities
+12. Update a Category
+- URL: /categories/{id}
+- Method: PUT
+- Description: Updates an existing category by ID.
+- Request Body:
+{
+    "name": "Personal"
+}
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "id": 1,
+        "name": "Personal"
+    }
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+13. Delete a Category
+- URL: /categories/{id}
+- Method: DELETE
+- Description: Deletes a category by ID.
+- Response:
+  - Status: 200 OK
+  - Body:
+    {
+        "message": "Category deleted successfully"
+    }
